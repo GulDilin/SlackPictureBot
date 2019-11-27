@@ -1,0 +1,6 @@
+httplib2
+slacker
+Flask==0.12
+slackclient>=2.0.0
+slack
+certifi
