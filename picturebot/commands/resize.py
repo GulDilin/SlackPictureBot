@@ -7,7 +7,6 @@ def resize_image(data, web_client, message_creator):
     message = None
     try:
         files = data['files']
-        print(f"files = {files}")
 
         if len(files) == 1:
             file_info = files[0]
@@ -16,7 +15,6 @@ def resize_image(data, web_client, message_creator):
             rev = lambda string: string[::-1]
             file_type = rev(rev(file_name).split(".")[0])
             print(f'file type = {file_type}')
-            url = file_info['url_private']
 
             if file_type not in FILE_TYPES_AR:
                 # ошибка формата архива

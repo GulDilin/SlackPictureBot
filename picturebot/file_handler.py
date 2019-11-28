@@ -1,6 +1,6 @@
 import requests
 import subprocess
-from message_creator import MessageHandler
+from message_creator import MessageCreator
 import os
 import re
 import json
@@ -109,7 +109,7 @@ def delete_files(path, files_in_pack):
         os.remove(path + file)
 
 
-def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
+def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
     pic_file_name = ""
     # скачивание
 
@@ -148,5 +148,5 @@ def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
     return OUT_DIR + pic_file_name
 
 
-def handle_file_with_def_dirs(file_id, message_handler: MessageHandler):
+def handle_file_with_def_dirs(file_id, message_handler: MessageCreator):
     return handle_file(file_id, DOWNLOAD_DIR, UNPACK_DIR, message_handler)

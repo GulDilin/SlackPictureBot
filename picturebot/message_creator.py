@@ -1,4 +1,4 @@
-class MessageHandler:
+class MessageCreator:
     DIVIDER_BLOCK = {"type": "divider"}
 
     def __init__(self, channel):
@@ -32,6 +32,18 @@ class MessageHandler:
 
     def get_no_such_command_message(self):
         return self.get_captioned_message("Sorry", "No such command. Try hello")
+
+    def get_help_message(self):
+        return self.get_simple_message("__INTRODUCE__:\nI have some commands: *hello*, *help*, *resize*\n\n"
+                                       + "If you want to resize picture, send me archive in .*zip* or *.7z* format"
+                                       + " with *only one* picture *.png*, *.jpg* and *json* configure inside\n\n"
+                                       + "Your configuration file need have this structure:\n"
+                                       + "```\t{\n"
+                                       + "      \t\t\"width\": int,\n"
+                                       + "      \t\t\"height\": int,\n"
+                                       + "      \t\t\"black_and_white\": bool\n"
+                                       + "\t}```\n"
+                                       + "black_and_white parameter is optional")
 
     def get_message_hello(self, username):
         return {
@@ -71,9 +83,8 @@ class MessageHandler:
 
     def _get_help_block(self):
         return self._get_task_block("Commands",
-                                    "Можешь написать команду resize и прикрепить архив с картинкой и конфигом.\n" +
-                                    " Я изменю размер картинки. Принимаю .zip или .7z" +
-                                    " с картинкой в формате .png, .jpg и .json конфиг с указанием размеров")
+                                    "Write me *resize* to resize your picture\n" +
+                                    "Pin an archive with that command. Use *help* to get more info")
 
     @staticmethod
     def _get_task_block(text, information):

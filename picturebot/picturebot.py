@@ -2,22 +2,23 @@ import os
 import logging
 import traceback
 import slack
-from message_creator import MessageHandler
+from message_creator import MessageCreator
 from commands.resize import resize_image
 from commands.say_hello import say_hello
+from commands.help import say_help
 
 # id бота, появляется после его старта
 bot_id = None
 
 # константы допустимых команд
-COMMANDS_NAMES = {"hello", "resize"}
-COMMANDS_FUNCS = {say_hello, resize_image}
+COMMANDS_NAMES = ("hello", "resize", "help")
+COMMANDS_FUNCS = (say_hello, resize_image, say_help)
 COMMANDS = dict(zip(COMMANDS_NAMES, COMMANDS_FUNCS))
 
 
 def handle_command(command, channel, web_client, data):
     message = None
-    message_creator = MessageHandler(channel)
+    message_creator = MessageCreator(channel)
     command = command.replace(f'<@{bot_id.lower()}>', '').split()[0]
 
     if command not in COMMANDS_NAMES:
@@ -31,16 +32,22 @@ def handle_command(command, channel, web_client, data):
     return message
 
 
+@slack.RTMClient.run_on(event='member_joined_channel')
+def new_user_added(**payload):
+    # поздороваться с новым пользователем
+    data = payload['data']
+    web_client = payload['web_client']
+    channel_id = data['channel']
+    message_creator = MessageCreator(channel_id)
+    web_client.chat_postMessage(message_creator.get_message_hello(data['user']))
+
+
 @slack.RTMClient.run_on(event='message')
 def parse_command(**payload):
-    # переменная для сообщения
-    message = None
-
     data = payload['data']
     web_client = payload['web_client']
     # идентификатор канала
     channel_id = data['channel']
-
     # сообщение пользователя
     text = data.get('text', []).lower()
 
