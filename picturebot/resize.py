@@ -33,10 +33,14 @@ def do_command(data, web_client, message_handler):
                     return message_handler.get_json_error_message()
 
                 print(f"res_pic = {pic_file_path}")
+
                 response = web_client.files_upload(
                     channels=data['channel'],
-                    file=pic_file_path)
+                    file=pic_file_path,
+                    icon_emoji=":dog")
                 assert response["ok"]
+
+                return message_handler.get_file_message()
 
         else:
             # больше одного файла прикреплено

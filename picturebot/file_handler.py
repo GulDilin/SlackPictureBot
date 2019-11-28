@@ -96,6 +96,9 @@ def get_size(json_file_path):
         data = json.load(read_file)
     return [int(data['width']), int(data['height'])]
 
+def delete_files(path, files_in_pack):
+    for file in files_in_pack:
+        os.remove(path + file)
 
 def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
     pic_file_name = ""
@@ -110,28 +113,29 @@ def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
     files_in_pack = os.listdir(unpk_dir + new_dir)
     # проверка содержимого архива
     print(f'files_in_pack = {files_in_pack}')
+
     if not check_files_num_in_pack(files_in_pack):
+        delete_files(path, files_in_pack)
         return "num_file_err"
 
-    json_file_path = path  + get_json_file(files_in_pack)
+    json_file_path = path + get_json_file(files_in_pack)
     print(f'files_in_pack = {files_in_pack}')
 
     pic_file_name = get_pic_file(files_in_pack)
-    pic_file_path = path  + pic_file_name
+    pic_file_path = path + pic_file_name
 
     if not check_json(json_file_path):
+        delete_files(path, files_in_pack)
         return "json_err"
 
     size = get_size(json_file_path)
     print(f'picture path = {pic_file_path}')
     resize_image(pic_file_path, OUT_DIR + pic_file_name, size)
 
-    for file in files_in_pack:
-        os.remove(path + file)
+    delete_files(path, files_in_pack)
 
     return OUT_DIR + pic_file_name
 
 
 def handle_file_with_def_dirs(file_id, message_handler: MessageHandler):
     return handle_file(file_id, DOWNLOAD_DIR, UNPACK_DIR, message_handler)
-

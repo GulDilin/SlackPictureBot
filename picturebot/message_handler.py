@@ -25,7 +25,10 @@ class MessageHandler:
         return self._get_simple_message("Ou", "You put wrong files in archive.\n You need to put pic and json config")
 
     def get_json_error_message(self):
-        return self._get_simple_message("Error", "Got invalid JSON file (width and height required")
+        return self._get_simple_message("Error", "Got invalid JSON file (width and height required)")
+
+    def get_file_message(self):
+        return self._get_simple_message("You resized picture", "Get your picture")
 
     def get_no_such_command_message(self):
         return self._get_simple_message("Sorry", "No such command. Try hello")
@@ -59,7 +62,9 @@ class MessageHandler:
 
     def _get_help_block(self):
         return self._get_task_block("Commands",
-                                    "Можешь напечатать команду resize и я изменю размер картинки. Принимаю .zip с картинкой в формате .png и .json с указанием размеров")
+                                    "Можешь написать команду resize и прикрепить архив с картинкой и конфигом.\n" +
+                                    " Я изменю размер картинки. Принимаю .zip или .7z" +
+                                    " с картинкой в формате .png, .jpg и .json конфиг с указанием размеров")
 
     @staticmethod
     def _get_task_block(text, information):

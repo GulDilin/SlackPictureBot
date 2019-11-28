@@ -39,7 +39,7 @@ def parse_command(**payload):
 
     # команда изменения размера
     elif 'resize' in text_message:
-        resize.do_command(data, web_client, message_handler)
+        message = resize.do_command(data, web_client, message_handler)
 
     if message is not None:
         web_client.chat_postMessage(**message)
