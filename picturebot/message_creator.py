@@ -10,28 +10,28 @@ class MessageHandler:
         self.pin_task_completed = False
 
     def get_files_num_error_message(self):
-        return self._get_simple_message("Error", "You should pin only one file")
+        return self.get_captioned_message("Error", "You should pin only one file")
 
     def get_filetype_error_message(self):
-        return self._get_simple_message("Error", "File should be *.zip* or *.7z*")
+        return self.get_captioned_message("Error", "File should be *.zip* or *.7z*")
 
     def get_no_file_error_message(self):
-        return self._get_simple_message("Error", "You should pin file")
+        return self.get_captioned_message("Error", "You should pin file")
 
     def get_upload_file_message(self):
-        return self._get_simple_message("Oweeee", "You uploaded file. Please wait")
+        return self.get_captioned_message("Oweeee", "You uploaded file. Please wait")
 
     def get_archive_res_error_message(self):
-        return self._get_simple_message("Ou", "You put wrong files in archive.\n You need to put pic and json config")
+        return self.get_captioned_message("Ou", "You put wrong files in archive.\n You need to put pic and json config")
 
     def get_json_error_message(self):
-        return self._get_simple_message("Error", "Got invalid JSON file (width and height required)")
+        return self.get_captioned_message("Error", "Got invalid JSON file (width and height required)")
 
     def get_file_message(self):
-        return self._get_simple_message("You resized picture", "Get your picture")
+        return self.get_captioned_message("You resized picture", "Get your picture")
 
     def get_no_such_command_message(self):
-        return self._get_simple_message("Sorry", "No such command. Try hello")
+        return self.get_captioned_message("Sorry", "No such command. Try hello")
 
     def get_message_hello(self, username):
         return {
@@ -46,15 +46,24 @@ class MessageHandler:
             ],
         }
 
-    def _get_simple_message(self, caption, info):
+    def get_captioned_message(self, caption, text):
         return {
             "ts": self.timestamp,
             "channel": self.channel,
             "username": self.username,
             "icon_emoji": self.icon_emoji,
             "blocks": [
-                *self._get_task_block(caption, info)
+                *self._get_task_block(caption, text)
             ],
+        }
+
+    def get_simple_message(self, text):
+        return {
+            "ts": self.timestamp,
+            "channel": self.channel,
+            "username": self.username,
+            "icon_emoji": self.icon_emoji,
+            "text": text
         }
 
     def _get_hello_block(self, username):

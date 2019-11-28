@@ -3,7 +3,7 @@ import file_handler
 FILE_TYPES_AR = {"zip", "7z"}
 
 
-def do_command(data, web_client, message_handler):
+def resize_image(data, web_client, message_creator):
     message = None
     try:
         files = data['files']
@@ -20,18 +20,17 @@ def do_command(data, web_client, message_handler):
 
             if file_type not in FILE_TYPES_AR:
                 # ошибка формата архива
-                message = message_handler.get_filetype_error_message()
+                message = message_creator.get_filetype_error_message()
             else:
                 # скачивание в случае успеха
-                web_client.chat_postMessage(**message_handler.get_upload_file_message())
-                pic_file_path = file_handler.handle_file_with_def_dirs(file_id, message_handler)
+                web_client.chat_postMessage(**message_creator.get_upload_file_message())
+                pic_file_path = file_handler.handle_file_with_def_dirs(file_id, message_creator)
 
                 if pic_file_path == "num_file_err":
-                    return message_handler.get_archive_res_error_message()
+                    return message_creator.get_archive_res_error_message()
 
                 if pic_file_path == "json_err":
-                    return message_handler.get_json_error_message()
-
+                    return message_creator.get_json_error_message()
                 print(f"res_pic = {pic_file_path}")
 
                 response = web_client.files_upload(
@@ -40,13 +39,13 @@ def do_command(data, web_client, message_handler):
                     icon_emoji=":dog")
                 assert response["ok"]
 
-                return message_handler.get_file_message()
+                return message_creator.get_file_message()
 
         else:
             # больше одного файла прикреплено
-            message = message_handler.get_files_num_error_message()
+            message = message_creator.get_files_num_error_message()
 
     except KeyError:
         # нет прикрепленных файлов
-        message = message_handler.get_no_file_error_message()
+        message = message_creator.get_no_file_error_message()
     return message

@@ -2,16 +2,33 @@ import os
 import logging
 import traceback
 import slack
-from message_handler import MessageHandler
-import resize
-
+from message_creator import MessageHandler
+from commands.resize import resize_image
+from commands.say_hello import say_hello
 
 # id бота, появляется после его старта
 bot_id = None
 
-# константа допустимых команд
-COMMANDS = {"hello", "resize"}
+# константы допустимых команд
+COMMANDS_NAMES = {"hello", "resize"}
+COMMANDS_FUNCS = {say_hello, resize_image}
+COMMANDS = dict(zip(COMMANDS_NAMES, COMMANDS_FUNCS))
 
+
+def handle_command(command, channel, web_client, data):
+    message = None
+    message_creator = MessageHandler(channel)
+    command = command.replace(f'<@{bot_id.lower()}>', '').split()[0]
+
+    if command not in COMMANDS_NAMES:
+        message = message_creator.get_no_such_command_message()
+    else:
+        message = COMMANDS[command](data=data, web_client=web_client, message_creator=message_creator)
+
+    if message is not None:
+        web_client.chat_postMessage(**message)
+
+    return message
 
 
 @slack.RTMClient.run_on(event='message')
@@ -21,28 +38,16 @@ def parse_command(**payload):
 
     data = payload['data']
     web_client = payload['web_client']
-    text = data.get('text', []).lower()
-    text_message = text.replace(f'<@{bot_id.lower()}>', '')  # сообщение пользователя (команда)
-
-    # инициализация обработчика сообщений в канале
+    # идентификатор канала
     channel_id = data['channel']
-    message_handler = MessageHandler(channel_id)
 
-    # если нет такой команды
-    if f'@{bot_id.lower()}' in text and text_message not in COMMANDS:
-        message = message_handler.get_no_such_command_message()
+    # сообщение пользователя
+    text = data.get('text', []).lower()
 
-    # команда приветствия
-    if 'hello' in text_message or ():
-        user = data['user']
-        message = message_handler.get_message_hello(f"<@{user}>")
-
-    # команда изменения размера
-    elif 'resize' in text_message:
-        message = resize.do_command(data, web_client, message_handler)
-
-    if message is not None:
-        web_client.chat_postMessage(**message)
+    if f'@{bot_id.lower()}' in text:
+        print("\n" + "-" * 10)
+        print(text + "\n")
+        handle_command(command=text, channel=channel_id, web_client=web_client, data=data)
 
 
 if __name__ == '__main__':
@@ -50,19 +55,25 @@ if __name__ == '__main__':
     logger.setLevel(logging.DEBUG)
 
     isrun = False
-    try:
-        print("Запуск Picture Bot")
-        slack_token = os.environ["SLACK_BOT_TOKEN"]
-        slack_team_token = os.environ["SLACK_TEAM_TOKEN"]
-        rtm_client = slack.RTMClient(token=slack_token)
-        slack_client = slack.WebClient(token=slack_token)
-        bot_id = slack_client.api_call("auth.test")["user_id"]
-        print(f"Picture Bot id={bot_id} запущен")
-        isrun = True
-        rtm_client.start()
-    except KeyError:
-        if isrun:
-            print("Бот упал")
+    while True:
+        try:
+            print("\n\n----------------\nЗапуск Picture Bot")
+            slack_token = os.environ["SLACK_BOT_TOKEN"]
+            slack_team_token = os.environ["SLACK_TEAM_TOKEN"]
+            rtm_client = slack.RTMClient(token=slack_token)
+            slack_client = slack.WebClient(token=slack_token)
+            bot_id = slack_client.api_call("auth.test")["user_id"]
+            print(f"Picture Bot id={bot_id} запущен")
+            isrun = True
+            rtm_client.start()
+        except KeyError:
+            if isrun:
+                print("Бот упал")
+                print('Ошибка:\n', traceback.format_exc())
+            else:
+                print("Невозможно запустить. Не задана переменная окружения SLACK_BOT_TOKEN")
+        except TimeoutError:
+            print("Проблемы с сетью")
+        except BaseException:
+            print("Что-то не так. Перезапускаюсь")
             print('Ошибка:\n', traceback.format_exc())
-        else:
-            print("Невозможно запустить. Не задана переменная окружения SLACK_BOT_TOKEN")

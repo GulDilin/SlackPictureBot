@@ -1,6 +1,6 @@
 import requests
 import subprocess
-from message_handler import MessageHandler
+from message_creator import MessageHandler
 import os
 import re
 import json
@@ -91,18 +91,28 @@ def check_json(json_file_path):
         return False
 
 
-def get_size(json_file_path):
+def get_size_and_bnw(json_file_path):
     with open(json_file_path, "r") as read_file:
         data = json.load(read_file)
-    return [int(data['width']), int(data['height'])]
+
+    isbnw = False
+    try:
+        isbnw = bool(data['black_and_white'])
+    except KeyError:
+        pass
+
+    return [int(data['width']), int(data['height'])], isbnw
+
 
 def delete_files(path, files_in_pack):
     for file in files_in_pack:
         os.remove(path + file)
 
+
 def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
     pic_file_name = ""
     # скачивание
+
     file_name = download(file_id, down_dir)
 
     rev = lambda s: s[::-1]
@@ -114,25 +124,26 @@ def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageHandler):
     # проверка содержимого архива
     print(f'files_in_pack = {files_in_pack}')
 
-    if not check_files_num_in_pack(files_in_pack):
+    try:
+        if not check_files_num_in_pack(files_in_pack):
+            delete_files(path, files_in_pack)
+            return "num_file_err"
+
+        json_file_path = path + get_json_file(files_in_pack)
+        print(f'files_in_pack = {files_in_pack}')
+
+        pic_file_name = get_pic_file(files_in_pack)
+        pic_file_path = path + pic_file_name
+
+        if not check_json(json_file_path):
+            delete_files(path, files_in_pack)
+            return "json_err"
+        # получение размера и флага ЧБ
+        size, isbnw = get_size_and_bnw(json_file_path)
+        print(f'picture path = {pic_file_path}')
+        resize_image(pic_file_path, OUT_DIR + pic_file_name, size, isbnw)
+    finally:
         delete_files(path, files_in_pack)
-        return "num_file_err"
-
-    json_file_path = path + get_json_file(files_in_pack)
-    print(f'files_in_pack = {files_in_pack}')
-
-    pic_file_name = get_pic_file(files_in_pack)
-    pic_file_path = path + pic_file_name
-
-    if not check_json(json_file_path):
-        delete_files(path, files_in_pack)
-        return "json_err"
-
-    size = get_size(json_file_path)
-    print(f'picture path = {pic_file_path}')
-    resize_image(pic_file_path, OUT_DIR + pic_file_name, size)
-
-    delete_files(path, files_in_pack)
 
     return OUT_DIR + pic_file_name
 
