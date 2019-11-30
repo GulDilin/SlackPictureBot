@@ -1,1 +1,1 @@
-web: python myapp.py
+worker: python picturebot/myapp.py
