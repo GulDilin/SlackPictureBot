@@ -1,1 +1,1 @@
-worker: python picturebot.py
+worker: python picturebot/picturebot.py

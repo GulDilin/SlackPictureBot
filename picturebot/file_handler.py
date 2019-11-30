@@ -6,9 +6,9 @@ import json
 from image_resizer import resize_image
 from pyunpack import Archive
 
-DOWNLOAD_DIR = "C:/Progs/SlackPictureBot/download_files/"
-OUT_DIR = "C:/Progs/SlackPictureBot/output_images/"
-UNPACK_DIR = "C:/Progs/SlackPictureBot/unpacked_files/"
+DOWNLOAD_DIR = "../download_files/"
+OUT_DIR = "../output_images/"
+UNPACK_DIR = "../unpacked_files/"
 PIC_TYPES = {"png", "jpeg", "jpg"}
 
 
