@@ -4,3 +4,4 @@ slack
 certifi
 requests
 Pillow
+pyunpack

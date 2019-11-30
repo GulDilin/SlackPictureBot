@@ -1,10 +1,10 @@
 import requests
-import subprocess
 from message_creator import MessageCreator
 import os
 import re
 import json
 from image_resizer import resize_image
+from pyunpack import Archive
 
 DOWNLOAD_DIR = "C:/Progs/SlackPictureBot/download_files/"
 OUT_DIR = "C:/Progs/SlackPictureBot/output_images/"
@@ -46,8 +46,9 @@ def unpack(file_path, destination_dir, new_dir):
         os.mkdir(destination_dir + new_dir)
     except FileExistsError:
         pass
-    subprocess.call(r'"C:\Program Files\7-Zip\7z.exe" x ' + file_path + ' -o' +
-                    destination_dir + new_dir)
+    Archive(file_path).extractall(destination_dir + new_dir)
+    # subprocess.call(r'"C:\Program Files\7-Zip\7z.exe" x ' + file_path + ' -o' +
+    #                 destination_dir + new_dir)
 
 
 def check_files_num_in_pack(files_in_pack: list):
@@ -150,3 +151,4 @@ def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
 
 def handle_file_with_def_dirs(file_id, message_handler: MessageCreator):
     return handle_file(file_id, DOWNLOAD_DIR, UNPACK_DIR, message_handler)
+
