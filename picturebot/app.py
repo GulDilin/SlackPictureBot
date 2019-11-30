@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import make_response
+import os
 
 app = Flask(__name__)
 
@@ -20,5 +21,6 @@ def hello_slack():
     return response
 
 if __name__ == '__main__':
+    print("app start")
     port = int(os.getenv('PORT', 5000))
     app.run(debug=False, port=port, host='0.0.0.0')
