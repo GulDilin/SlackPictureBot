@@ -123,9 +123,9 @@ def check_dir_exist(dir):
 
 def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
     # проверка наличия директорий, создание при отсутствии
-    check_dir_exist(down_dir)
-    check_dir_exist(unpk_dir)
-    check_dir_exist(OUT_DIR)
+    # check_dir_exist(down_dir)
+    # check_dir_exist(unpk_dir)
+    # check_dir_exist(OUT_DIR)
 
     pic_file_name = ""
     # скачивание
