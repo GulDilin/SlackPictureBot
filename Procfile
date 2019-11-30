@@ -1,1 +1,1 @@
-web: python picturebot.py
+worker: python picturebot.py
