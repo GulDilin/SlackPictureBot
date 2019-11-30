@@ -1,5 +1,5 @@
 /venv/
-/download_files/
-/unpacked_files/
-/output_images/
+/staticfiles/download_files/
+/staticfiles/unpacked_files/
+/staticfiles/output_images/
 

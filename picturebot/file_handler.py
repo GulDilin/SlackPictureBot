@@ -6,9 +6,9 @@ import json
 from image_resizer import resize_image
 from pyunpack import Archive
 
-DOWNLOAD_DIR = "../download_files/"
-OUT_DIR = "../output_images/"
-UNPACK_DIR = "../unpacked_files/"
+DOWNLOAD_DIR = "../staticfiles/download_files/"
+OUT_DIR = "../staticfiles/output_images/"
+UNPACK_DIR = "../staticfiles/unpacked_files/"
 PIC_TYPES = {"png", "jpeg", "jpg"}
 
 
@@ -109,6 +109,7 @@ def delete_files(path, files_in_pack):
     for file in files_in_pack:
         os.remove(path + file)
 
+
 def check_dir_exist(dir):
     try:
         os.listdir(dir)
@@ -117,6 +118,7 @@ def check_dir_exist(dir):
             os.mkdir(dir)
         except FileExistsError:
             pass
+        pass
 
 
 def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
@@ -164,4 +166,3 @@ def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
 
 def handle_file_with_def_dirs(file_id, message_handler: MessageCreator):
     return handle_file(file_id, DOWNLOAD_DIR, UNPACK_DIR, message_handler)
-
