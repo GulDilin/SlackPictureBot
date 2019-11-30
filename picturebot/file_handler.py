@@ -109,11 +109,24 @@ def delete_files(path, files_in_pack):
     for file in files_in_pack:
         os.remove(path + file)
 
+def check_dir_exist(dir):
+    try:
+        os.listdir(dir)
+    except FileNotFoundError:
+        try:
+            os.mkdir(dir)
+        except FileExistsError:
+            pass
+
 
 def handle_file(file_id, down_dir, unpk_dir, message_handler: MessageCreator):
+    # проверка наличия директорий, создание при отсутствии
+    check_dir_exist(down_dir)
+    check_dir_exist(unpk_dir)
+    check_dir_exist(OUT_DIR)
+
     pic_file_name = ""
     # скачивание
-
     file_name = download(file_id, down_dir)
 
     rev = lambda s: s[::-1]
