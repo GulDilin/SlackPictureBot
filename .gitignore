@@ -1,1 +1,5 @@
 /venv/
+/download_files/*
+/unpacked_files/*
+/output_images/*
+
