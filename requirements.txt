@@ -1,7 +1,7 @@
 httplib2
 slackclient>=2.0.0
 slack
-flask
+Flask==0.12
 requests
 Pillow
 pyunpack
